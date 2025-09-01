@@ -5,6 +5,8 @@
     { "path": "./tsconfig.node.json" }
   ],
   "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
     "baseUrl": ".",
     "types": ["vite/client", "node"],
     "paths": {
