@@ -1,13 +1,13 @@
-<!-- src/views/User/Login.vue -->
+<!-- src/views/User/Regoster.vue -->
 <template>
   <UserLayout :imageUrl=LoginImage>
-    <LoginForm />
+    <RegisterForm />
   </UserLayout>
 </template>
 
 <script setup>
 import UserLayout from '@/components/User/UserLayout.vue'
-import LoginForm from '@/components/User/LoginForm.vue'
+import RegisterForm from '@/components/User/RegisterForm.vue'
 
 import { getCoverImage } from '@/utils/cover_images'
 const LoginImage = getCoverImage()
