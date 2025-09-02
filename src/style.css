@@ -11,6 +11,10 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --color-primary: #9470db; /* 主色 */
+  --color-deeper: #8062bc;
+  --color-accent: #b7db70;  /* 互补装饰色 */
 }
 
 a {
@@ -61,7 +65,6 @@ button:focus-visible {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
