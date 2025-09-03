@@ -1,4 +1,4 @@
-<!-- src/components/UserLayout.vue -->
+<!-- src/components/AuthLayout.vue -->
 <template>
   <div class="layout-wrapper">
     <div class="layout">
