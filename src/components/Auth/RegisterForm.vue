@@ -66,7 +66,7 @@ const passwordRules = [
   { required: true, message: '请输入密码', trigger: 'blur' },
   { min: 6, message: '密码长度不能小于 6 个字符', trigger: 'blur' },
   { max: 18, message: '密码长度不能超过 18 个字符', trigger: 'blur' },
-  { pattern: /^[a-zA-Z0-9!@#$%^&*()_+-=?<>][}{}]+$/, message: '密码只能包含字母、数字和特殊字符', trigger: 'blur' }
+  { pattern: /^[a-zA-Z0-9!@#$%^&*()_\+\-=?<>\[\]{}]{6,18}$/, message: '密码只能包含字母、数字和特殊字符', trigger: 'blur' }
 ]
 
 const emailRules = [
