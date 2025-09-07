@@ -16,10 +16,10 @@
       <a-input v-model:value="formState.email" placeholder="请输入邮箱" class="input-button" />
     </a-form-item>
 
-    <a-form-item label="验证码" name="captcha">
+    <a-form-item label="验证码" name="code">
       <div style="display: flex; gap: 10px;">
-        <a-input v-model:value="formState.captcha" placeholder="请输入验证码" style="flex: 1" class="input-button" />
-        <a-button :disabled="isCounting" @click="SendCaptcha" style="width: 100px; height: 38px" class="sendCaptcha">
+        <a-input v-model:value="formState.code" placeholder="请输入验证码" style="flex: 1" class="input-button" />
+        <a-button :disabled="isCounting" @click="SendCode" style="width: 100px; height: 38px" class="sendCode">
           {{ isCounting ? `${countdown}s` : '发送验证码' }}
         </a-button>
       </div>
@@ -43,7 +43,7 @@
 import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router';
-import { sendCode } from '@/apis/auth'
+import { sendCode, register } from '@/apis/auth'
 
 const router = useRouter();
 const formRef = ref()
@@ -52,7 +52,7 @@ const formState = reactive({
   username: '',
   password: '',
   email: '',
-  captcha: ''
+  code: ''
 })
 
 const usernameRules = [
@@ -80,7 +80,7 @@ const isCounting = ref(false)
 const countdown = ref(60)
 let timer = null
 
-const SendCaptcha = async () => {
+const SendCode = async () => {
   if (isCounting.value) return
   try {
     await formRef.value.validateFields(['email']);
@@ -109,11 +109,18 @@ const SendCaptcha = async () => {
 }
 
 const handleSubmit = async () => {
-  if (formState.captcha.length != 6) {
+  if (formState.code.length != 6) {
     message.error('请填写正确的信息')
     return
   }
-  /* 注册接口 */
+
+  const res = await register(formState);
+  if (res.code === 200) {
+    message.success(res.message);
+    router.push('/login');
+  } else {
+    message.warning(res.message);
+  }
 }
 
 const onFinishFailed = ({ errorFields }) => {
@@ -149,7 +156,7 @@ const onFinishFailed = ({ errorFields }) => {
   border-color: var(--color-primary);
 }
 
-.sendCaptcha:hover {
+.sendCode:hover {
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
