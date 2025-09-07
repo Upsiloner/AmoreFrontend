@@ -43,6 +43,7 @@
 import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router';
+import { sendCode } from '@/apis/auth'
 
 const router = useRouter();
 const formRef = ref()
@@ -98,7 +99,13 @@ const SendCaptcha = async () => {
       isCounting.value = false
     }
   }, 1000)
-  /* 发送验证码接口 */
+  
+  const res = await sendCode({ email: formState.email });
+  if (res.code === 200) {
+    message.success(res.message);
+  } else {
+    message.warning(res.message);
+  }
 }
 
 const handleSubmit = async () => {

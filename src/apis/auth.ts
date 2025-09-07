@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
-// login
-// const login = (data: any) => {
-//   return request.post('/apis/Auth/login', data)
-// }
+// 发送验证码
+const sendCode = (data: object) => {
+  return request.post('/Auth/sendCode', data)
+}
 
-// export { login };
+export { sendCode };
