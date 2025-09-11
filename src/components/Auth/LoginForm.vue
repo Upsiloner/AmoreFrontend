@@ -32,8 +32,11 @@
 import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router';
+import { login } from '@/apis/auth'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter();
+const userStore = useUserStore();
 
 const formState = reactive({
   email: '',
@@ -53,7 +56,21 @@ const passwordRules = [
   { max: 18, message: '密码长度不能超过 18 个字符', trigger: 'blur' },
 ]
 
-const handleSubmit = async () => {}
+const handleSubmit = async () => {
+  const res = await login(formState);
+  if (res.code === 200) {
+    message.success(res.message);
+    userStore.setUserInfo({
+      token: res.data.token,
+      uid: res.data.uid,
+      username: res.data.username,
+      email: res.data.email,
+    });
+    router.push('/home');
+  } else {
+    message.warning(res.message);
+  }
+}
 
 const onFinishFailed = ({ errorFields }) => {
   message.error('请填写正确的邮箱和密码')

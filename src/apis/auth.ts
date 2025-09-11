@@ -10,4 +10,9 @@ const register = (data: object) => {
   return request.post('/Auth/register', data)
 }
 
-export { sendCode, register };
+// 用户登录
+const login = (data: object) => {
+  return request.post('/Auth/login', data)
+}
+
+export { sendCode, register, login };
