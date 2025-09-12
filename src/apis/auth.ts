@@ -15,4 +15,9 @@ const login = (data: object) => {
   return request.post('/Auth/login', data)
 }
 
-export { sendCode, register, login };
+// 忘记密码
+const forget = (data: object) => {
+  return request.post('/Auth/forget', data)
+}
+
+export { sendCode, register, login, forget };

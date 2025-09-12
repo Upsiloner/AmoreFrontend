@@ -3,13 +3,13 @@
     @finishFailed="onFinishFailed">
 
     <!-- 新密码 -->
-    <a-form-item label="新密码" name="password" :rules="passwordRules" has-feedback class="form-item">
-      <a-input-password v-model:value="formState.password" placeholder="请输入新密码" class="input-button" />
+    <a-form-item label="新密码" name="password1" :rules="passwordRules" has-feedback class="form-item">
+      <a-input-password v-model:value="formState.password1" placeholder="请输入新密码" class="input-button" />
     </a-form-item>
 
     <!-- 再次输入新密码 -->
-    <a-form-item label="重复密码" name="password1" :rules="passwordRules" has-feedback class="form-item">
-      <a-input-password v-model:value="formState.password1" placeholder="再次输入新密码" class="input-button" />
+    <a-form-item label="重复密码" name="password2" :rules="passwordRules" has-feedback class="form-item">
+      <a-input-password v-model:value="formState.password2" placeholder="再次输入新密码" class="input-button" />
     </a-form-item>
 
     <!-- 邮箱绑定 -->
@@ -17,10 +17,10 @@
       <a-input v-model:value="formState.email" placeholder="请输入邮箱" class="input-button" />
     </a-form-item>
 
-    <a-form-item label="验证码" name="captcha">
+    <a-form-item label="验证码" name="code">
       <div style="display: flex; gap: 10px;">
-        <a-input v-model:value="formState.captcha" placeholder="请输入验证码" style="flex: 1" class="input-button" />
-        <a-button :disabled="isCounting" @click="SendCaptcha" style="width: 100px; height: 38px" class="sendCaptcha">
+        <a-input v-model:value="formState.code" placeholder="请输入验证码" style="flex: 1" class="input-button" />
+        <a-button :disabled="isCounting" @click="SendCode" style="width: 100px; height: 38px" class="sendCode">
           {{ isCounting ? `${countdown}s` : '发送验证码' }}
         </a-button>
       </div>
@@ -45,15 +45,16 @@
 import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router';
+import { sendCode, forget } from '@/apis/auth'
 
 const router = useRouter();
 const formRef = ref()
 
 const formState = reactive({
-  password: '',
   password1: '',
+  password2: '',
   email: '',
-  captcha: ''
+  code: ''
 })
 
 const passwordRules = [
@@ -74,7 +75,7 @@ const isCounting = ref(false)
 const countdown = ref(60)
 let timer = null
 
-const SendCaptcha = async () => {
+const SendCode = async () => {
   if (isCounting.value) return
   try {
     await formRef.value.validateFields(['email']);
@@ -94,18 +95,34 @@ const SendCaptcha = async () => {
     }
   }, 1000)
 
-  /* 发送验证码接口 */
+  const res = await sendCode({ email: formState.email });
+  if (res.code === 200) {
+    message.success(res.message);
+  } else {
+    message.warning(res.message);
+  }
 }
 
 const handleSubmit = async () => {
-  if (formState.captcha.length != 6) {
+  if (formState.code.length != 6) {
     message.error('请填写正确的信息')
     return
-  } else if (formState.password != formState.password1) {
+  } else if (formState.password1 != formState.password2) {
     message.error('两次输入的密码不一致')
     return
   }
-  /* 注册接口 */
+  
+  const res = await forget({
+    email: formState.email,
+    code: formState.code,
+    password: formState.password1
+  });
+  if (res.code === 200) {
+    message.success(res.message);
+    router.push('/login');
+  } else {
+    message.warning(res.message);
+  }
 }
 
 const onFinishFailed = ({ errorFields }) => {
