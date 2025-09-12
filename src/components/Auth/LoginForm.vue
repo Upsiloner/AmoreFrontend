@@ -33,10 +33,8 @@ import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router';
 import { login } from '@/apis/auth'
-import { useUserStore } from '@/stores/user'
 
 const router = useRouter();
-const userStore = useUserStore();
 
 const formState = reactive({
   email: '',
@@ -60,12 +58,7 @@ const handleSubmit = async () => {
   const res = await login(formState);
   if (res.code === 200) {
     message.success(res.message);
-    userStore.setUserInfo({
-      token: res.data.token,
-      uid: res.data.uid,
-      username: res.data.username,
-      email: res.data.email,
-    });
+    localStorage.setItem("token", res.data.token);
     router.push('/home');
   } else {
     message.warning(res.message);
