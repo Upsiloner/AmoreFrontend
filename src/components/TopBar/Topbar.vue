@@ -8,8 +8,9 @@
       <span class="title">青梅博客</span>
     </div>
     <div class="right">
-      <a-dropdown>
-        <div class="user-trigger" @click.prevent>
+      <div class="user-dropdown" ref="dropdownRef">
+        <!-- 头像 + 用户名 -->
+        <div class="user-trigger" @click="toggleDropdown">
           <div class="avatar" v-if="!userStore.avatar">
             {{ userStore.username.slice(0, 2) }}
           </div>
@@ -17,14 +18,12 @@
           <span class="username">{{ userStore.username }}</span>
         </div>
 
-        <!-- 下拉内容 -->
-        <template #overlay>
-          <a-menu>
-            <a-menu-item key="1">个人中心</a-menu-item>
-            <a-menu-item key="2">退出登录</a-menu-item>
-          </a-menu>
-        </template>
-      </a-dropdown>
+        <!-- 下拉菜单 -->
+        <div v-if="dropdownOpen" class="dropdown-menu">
+          <div class="dropdown-item" @click="goProfile">社区公约</div>
+          <div class="dropdown-item" @click="logout">退出登录</div>
+        </div>
+      </div>
     </div>
   </a-layout-header>
 </template>
@@ -32,36 +31,77 @@
 <script setup lang="ts">
 import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
 import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { message } from 'ant-design-vue'
 
 const userStore = useUserStore()
+const router = useRouter()
+const dropdownOpen = ref(false)
+const dropdownRef = ref<HTMLElement | null>(null)
+
+const toggleDropdown = () => {
+  dropdownOpen.value = !dropdownOpen.value
+}
+
+const handleClickOutside = (event: MouseEvent) => {
+  const target = event.target as HTMLElement
+  if (dropdownRef.value && !dropdownRef.value.contains(target)) {
+    dropdownOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('click', handleClickOutside)
+})
+
+const goProfile = () => {
+  message.info('社区公约')
+  dropdownOpen.value = false
+}
+
+const logout = () => {
+  message.info('退出登录')
+  dropdownOpen.value = false
+}
 
 defineProps<{ collapsed: boolean }>()
 defineEmits(['toggleSider'])
 </script>
 
 <style scoped>
+.user-dropdown {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
 .user-trigger {
   display: flex;
   align-items: center;
   cursor: pointer;
-  padding-right: 6px;
+  padding: 4px 6px;
+  user-select: none;
 }
 
 .avatar {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: var(--color-accent);
-  color: var(--color-primary);
+  background-color: #b7db70; /* --color-accent */
+  color: #9470db; /* --color-primary */
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
   font-size: 14px;
   margin-right: 8px;
-  user-select: none;
-  flex-shrink: 0;
   text-transform: uppercase;
+  flex-shrink: 0;
 }
 
 .user-trigger img.avatar {
@@ -76,6 +116,36 @@ defineEmits(['toggleSider'])
   color: gray;
   font-weight: 500;
   font-size: 16px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 3px;
+  background: #fff;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  width: 130px;
+  z-index: 1000;
+  padding: 5px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  font-size: 16px;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dropdown-item:hover {
+  background-color: #F0F0F0;
+  border-radius: 8px;
 }
 
 .siderButton {
