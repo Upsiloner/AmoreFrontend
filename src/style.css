@@ -12,9 +12,10 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --color-primary: #9470db; /* 主色 */
-  --color-deeper: #8062bc;
-  --color-accent: #b7db70;  /* 互补装饰色 */
+  --color-primary: #704da8; /* 主色 */
+  --color-deeper: #453d7c;
+  --color-lighter: #c2c0e7;
+  --color-accent: #8dc99f;  /* 互补装饰色 */
 }
 
 a {

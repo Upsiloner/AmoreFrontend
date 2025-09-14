@@ -92,8 +92,8 @@ defineEmits(['toggleSider'])
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: #b7db70; /* --color-accent */
-  color: #9470db; /* --color-primary */
+  background-color: var(--color-accent);
+  color: var(--color-primary);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -181,7 +181,7 @@ defineEmits(['toggleSider'])
   margin-left: 12px;
   font-size: 20px;
   font-weight: bolder;
-  color: var(--color-deeper);
+  color: var(--color-primary);
   text-shadow: 1px 1px 2px var(--color-accent);
 }
 

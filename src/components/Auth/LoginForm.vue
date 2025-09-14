@@ -72,8 +72,9 @@ const onFinishFailed = ({ errorFields }) => {
 
 <style scoped>
 .logo {
+  display: block;
+  margin: 0 auto 20px auto;
   height: 108px;
-  margin-bottom: 20px;
 }
 
 ::v-deep(.ant-form-item-label > label) {

@@ -121,8 +121,8 @@ onMounted(async () => {
 }
 
 .sider ::v-deep(.ant-menu-item-selected) {
-  background-color: var(--color-primary) !important;
-  color: white !important;
+  background-color: var(--color-lighter) !important;
+  color: var(--color-deeper) !important;
   font-weight: bolder;
 }
 </style>
