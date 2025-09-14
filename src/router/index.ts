@@ -4,7 +4,8 @@ import { jwtDecode } from 'jwt-decode'
 import Login from '@/views/Auth/Login.vue'
 import Forget from '@/views/Auth/Forget.vue'
 import Register from '@/views/Auth/Register.vue'
-import Home from '@/views/Home.vue'
+import Layout from '@/views/Layout.vue'
+import Profile from '@/views/Profile.vue'
 
 const routes = [
   {
@@ -23,17 +24,29 @@ const routes = [
     component: Forget,
   },
   {
-    path: '/home',
-    name: 'Home',
-    component: Home,
-    meta: { requiresAuth: true }
-  },
-  {
     path: '/',
-    name: 'Index',
-    component: Home,
-    meta: { requiresAuth: true }
-  },
+    name: 'Layout',
+    component: Layout,
+    meta: { requiresAuth: true },
+    redirect: '/home',
+    children: [
+      {
+        path: 'home',
+        name: 'Home',
+        component: Profile
+      },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: Profile
+      },
+      {
+        path: 'settings',
+        name: 'Settings',
+        component: Profile
+      }
+    ]
+  }
 ]
 
 const router = createRouter({
