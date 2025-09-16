@@ -109,6 +109,7 @@ onMounted(async () => {
 .content {
   margin: 16px;
   padding: 16px;
+  border-radius: 8px;
   background-color: #fff;
   flex: 1;
 }

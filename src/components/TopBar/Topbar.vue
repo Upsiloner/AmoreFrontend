@@ -12,10 +12,11 @@
         <!-- 头像 + 用户名 -->
         <div class="user-trigger" @click="toggleDropdown">
           <div class="avatar" v-if="!userStore.avatar">
-            {{ userStore.username.slice(0, 2) }}
+            {{ displayName }}
           </div>
           <img v-else class="avatar" :src="userStore.avatar" alt="avatar" />
           <span class="username">{{ userStore.username }}</span>
+          <DownOutlined class="down-icon"/>
         </div>
 
         <!-- 下拉菜单 -->
@@ -29,10 +30,10 @@
 </template>
 
 <script setup lang="ts">
-import { MenuUnfoldOutlined, MenuFoldOutlined } from '@ant-design/icons-vue'
+import { MenuUnfoldOutlined, MenuFoldOutlined, DownOutlined } from '@ant-design/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { message } from 'ant-design-vue'
 
 const userStore = useUserStore()
@@ -50,6 +51,17 @@ const handleClickOutside = (event: MouseEvent) => {
     dropdownOpen.value = false
   }
 }
+
+const displayName = computed(() => {
+  const name = userStore.username || ''
+  if (!name) return ''
+  const firstChar = name.charAt(0)
+  if (/[\u4e00-\u9fff]/.test(firstChar)) {
+    return firstChar
+  } else {
+    return name.slice(0, 2)
+  }
+})
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
@@ -116,6 +128,12 @@ defineEmits(['toggleSider'])
   color: gray;
   font-weight: 500;
   font-size: 16px;
+}
+
+.down-icon {
+  font-size: 12px;
+  margin-left: 4px;
+  color: gray;
 }
 
 .dropdown-menu {
