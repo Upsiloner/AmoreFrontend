@@ -5,4 +5,9 @@ const profile = () => {
   return request.get('/UserInfo/profile')
 }
 
-export { profile };
+// 上传头像
+const avatar = (data: object) => {
+  return request.post('/UserInfo/avatar', data)
+}
+
+export { profile, avatar };

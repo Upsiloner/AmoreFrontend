@@ -61,7 +61,7 @@ const goTo = (path) => {
 }
 
 onMounted(async () => {
-  const { code, data, msg } = await profile()
+  const { code, data, message: msg } = await profile()
   if (code === 200) {
     userStore.setUserInfo(data)
   } else {
