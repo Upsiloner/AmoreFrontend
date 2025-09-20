@@ -1,5 +1,5 @@
 <template>
-  <a-layout-header class="navbar">
+  <a-layout-header class="topbar">
     <div class="left">
       <a-button type="text" @click="$emit('toggleSider')" class="siderButton">
         <MenuUnfoldOutlined v-if="collapsed" />
@@ -7,7 +7,16 @@
       </a-button>
       <span class="title">青梅博客</span>
     </div>
+
     <div class="right">
+      <a-tooltip title="发布内容">
+        <div class="publish-wrapper" @click="showPublish = true">
+          <FormOutlined class="publish-icon"/>
+        </div>
+      </a-tooltip>
+        
+      <PublishModal v-model:open="showPublish" />
+
       <div class="user-dropdown" ref="dropdownRef">
         <!-- 头像 + 用户名 -->
         <div class="user-trigger" @click="toggleDropdown">
@@ -30,16 +39,18 @@
 </template>
 
 <script setup lang="ts">
-import { MenuUnfoldOutlined, MenuFoldOutlined, DownOutlined } from '@ant-design/icons-vue'
+import { MenuUnfoldOutlined, MenuFoldOutlined, DownOutlined, FormOutlined } from '@ant-design/icons-vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { Modal, message } from 'ant-design-vue'
 import { logout } from '@/apis/auth'
+import PublishModal from "@/components/Topbar/PublishModal.vue";
 
 const userStore = useUserStore()
 const router = useRouter()
 const dropdownOpen = ref(false)
+const showPublish = ref(false);
 const dropdownRef = ref<HTMLElement | null>(null)
 
 const toggleDropdown = () => {
@@ -98,14 +109,6 @@ const handleLogout = () => {
       } else {
         message.error(msg)
       }
-
-      // userStore.clearUserInfo(); 
-      // localStorage.removeItem("token");
-
-      // 3. 跳转到登录页
-      // router.push("/login");
-
-      // message.success("退出成功");
     },
   });
   dropdownOpen.value = false
@@ -116,6 +119,28 @@ defineEmits(['toggleSider'])
 </script>
 
 <style scoped>
+.publish-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  color: var(--color-primary);
+  cursor: pointer;
+  transition: all 0.7s;
+  margin-right: 12px;
+}
+
+.publish-wrapper:hover {
+  color: var(--color-deeper);
+  background-color: var(--color-lighter);
+}
+
+.publish-icon {
+  font-size: 20px;
+}
+
 .user-dropdown {
   position: relative;
   display: flex;
@@ -211,7 +236,7 @@ defineEmits(['toggleSider'])
   box-shadow: none;
 }
 
-.navbar {
+.topbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -234,6 +259,8 @@ defineEmits(['toggleSider'])
 }
 
 .right {
+  display: flex;
+  align-items: center;
   color: white;
 }
 </style>
