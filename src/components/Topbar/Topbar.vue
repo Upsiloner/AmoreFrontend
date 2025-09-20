@@ -22,7 +22,7 @@
         <!-- 下拉菜单 -->
         <div v-if="dropdownOpen" class="dropdown-menu">
           <div class="dropdown-item" @click="goProfile">社区公约</div>
-          <div class="dropdown-item" @click="logout">退出登录</div>
+          <div class="dropdown-item" @click="handleLogout">退出登录</div>
         </div>
       </div>
     </div>
@@ -34,7 +34,8 @@ import { MenuUnfoldOutlined, MenuFoldOutlined, DownOutlined } from '@ant-design/
 import { useUserStore } from '@/stores/user'
 import { useRouter } from 'vue-router'
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { message } from 'ant-design-vue'
+import { Modal, message } from 'ant-design-vue'
+import { logout } from '@/apis/auth'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -76,8 +77,37 @@ const goProfile = () => {
   dropdownOpen.value = false
 }
 
-const logout = () => {
-  message.info('退出登录')
+const handleLogout = () => {
+  Modal.confirm({
+    title: "确认退出登录吗？",
+    okText: "确定",
+    cancelText: "取消",
+    okButtonProps: {
+      style: { backgroundColor: '#704da8', borderColor: '#453d7c', color: '#fff' }
+    },
+    cancelButtonProps: {
+      style: { backgroundColor: '#f5f5f5', color: '#333', borderColor: '#d9d9d9' }
+    },
+    async onOk() {
+      const { code, data, message: msg } = await logout();
+      if (code === 200) {
+        userStore.clearUserInfo(); 
+        localStorage.removeItem("token");
+        router.push("/login");
+        message.success(msg);
+      } else {
+        message.error(msg)
+      }
+
+      // userStore.clearUserInfo(); 
+      // localStorage.removeItem("token");
+
+      // 3. 跳转到登录页
+      // router.push("/login");
+
+      // message.success("退出成功");
+    },
+  });
   dropdownOpen.value = false
 }
 

@@ -48,7 +48,7 @@ import { message } from 'ant-design-vue'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { HomeOutlined, UserOutlined, SettingOutlined } from '@ant-design/icons-vue'
-import Topbar from '@/components/Topbar.vue'
+import Topbar from '@/components/Topbar/Topbar.vue'
 
 const userStore = useUserStore()
 const router = useRouter()

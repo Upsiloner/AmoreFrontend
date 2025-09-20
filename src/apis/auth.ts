@@ -20,4 +20,9 @@ const forget = (data: object) => {
   return request.post('/Auth/forget', data)
 }
 
-export { sendCode, register, login, forget };
+// 用户登出
+const logout = () => {
+  return request.post('/Auth/logout')
+}
+
+export { sendCode, register, login, forget, logout };

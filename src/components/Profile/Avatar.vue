@@ -122,7 +122,7 @@ const saveCroppedImage = async () => {
   const { code, data, message: msg } = await avatar({ avatarBase64: canvas.toDataURL("image/png") });
   if (code === 200) {
     userStore.avatar = data;
-    message.info(msg)
+    message.success(msg)
   } else {
     message.error(msg)
   }
