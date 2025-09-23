@@ -118,8 +118,16 @@ const saveCroppedImage = async () => {
     width: 200,
     height: 200,
   });
+
+  // 转成 Blob (异步)
+  const blob = await new Promise((resolve) =>
+    canvas.toBlob((b) => resolve(b), "image/png")
+  );
+  // 用 FormData 包装
+  const formData = new FormData();
+  formData.append("file", blob, "avatar_" + userStore.uid + ".png");
   
-  const { code, data, message: msg } = await avatar({ avatarBase64: canvas.toDataURL("image/png") });
+  const { code, data, message: msg } = await avatar(formData);
   if (code === 200) {
     userStore.avatar = data;
     message.success(msg)

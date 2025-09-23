@@ -6,8 +6,8 @@ const profile = () => {
 }
 
 // 上传头像
-const avatar = (data: object) => {
-  return request.post('/UserInfo/avatar', data)
+const avatar = (formData: FormData) => {
+  return request.post('/UserInfo/avatar', formData)
 }
 
 export { profile, avatar };
