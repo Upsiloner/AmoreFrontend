@@ -18,15 +18,43 @@
       </div>
 
       <div class="input-wrapper">
+        <!-- 高亮层 -->
+        <div class="highlight-layer" v-html="highlightedContent"></div>
+
+        <!-- 真实输入框 -->
         <a-textarea
           v-model:value="content"
-          placeholder="请输入内容"
-          :auto-size="{ minRows: 3, maxRows: 6 }"
+
+          placeholder="随时随地，分享新鲜事~"
+          :auto-size="{ minRows: 5, maxRows: 30 }"
           class="textInput"
           @input="handleContentInput"
         />
         <span class="word-count">{{ contentRemaining }} / {{ maxContentLength }}</span>
       </div>
+
+      <div class="buttom-wrapper">
+        
+        <div class="emoji-bar" @mouseleave="showEmoji = false">
+          <div @mouseenter="showEmoji = true" class="emoji-btn"><SmileOutlined /></div>
+          <div v-if="showEmoji" class="emoji-popup">
+            <emoji-picker @emoji-click="onEmojiClick" />
+          </div>
+        </div>
+
+        <div class="image-bar">
+          <FileImageOutlined />
+        </div>
+
+        <div class="tag-bar" @click="onTagClick">
+          <NumberOutlined />
+        </div>
+
+        <div class="map-bar" @click="onTagClick">
+          <MapIcon/>
+        </div>
+      </div>
+
     </div>
 
     <div class="publish-modal-footer">
@@ -39,7 +67,10 @@
 <script setup>
 import { ref, computed } from "vue";
 import { message } from "ant-design-vue";
+import { SmileOutlined, FileImageOutlined, NumberOutlined } from '@ant-design/icons-vue'
+import MapIcon from '@/assets/icons/map.svg'
 import axios from "axios";
+import "emoji-picker-element";
 
 const props = defineProps({
   open: { type: Boolean, required: true }
@@ -50,12 +81,20 @@ const emit = defineEmits(["update:open"]);
 const title = ref("");
 const content = ref("");
 const loading = ref(false);
+const showEmoji = ref(false);
 
 const maxTitleLength = 50;
 const maxContentLength = 500;
 
 const titleRemaining = computed(() => title.value.length);
 const contentRemaining = computed(() => content.value.length);
+
+const onEmojiClick = (event) => {
+  const emoji = event.detail.unicode;
+  content.value += emoji;
+};
+
+const onTagClick = (event) => {};
 
 const handleTitleInput = (e) => {
   if (e.target.value.length > maxTitleLength) {
@@ -118,11 +157,47 @@ const handleConfirm = async () => {
 
 .titleInput, .textInput {
   border: var(--color-lighter) 1px solid;
+  font-size: 16px;
 }
 
 .titleInput:hover, .textInput:hover,
 .titleInput:focus, .textInput:focus {
   border: var(--color-deeper) 1px solid;
+}
+
+.buttom-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.emoji-bar {
+  position: relative;
+}
+
+.emoji-popup {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 1000;
+}
+
+.emoji-btn, .image-bar, .tag-bar, .map-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 36px;
+  border-radius: 8px;
+  margin: 2px;
+  font-size: 20px;
+  color: gray;
+  padding: 3px 8px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.emoji-btn:hover, .image-bar:hover, .tag-bar:hover, .map-bar:hover {
+  background-color: var(--color-lighter);
+  color: var(--color-deeper);
 }
 
 .word-count {

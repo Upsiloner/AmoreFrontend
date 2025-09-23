@@ -1,9 +1,9 @@
 <!-- src/views/Profile.vue -->
 <template>
-  <ProfilePage />
+  <Avatar />
 </template>
 
 <script setup>
-import ProfilePage from '@/components/Profile/Avatar.vue'
+import Avatar from '@/components/Profile/Avatar.vue'
 
 </script>
