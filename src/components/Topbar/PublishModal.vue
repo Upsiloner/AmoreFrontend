@@ -32,11 +32,17 @@
         />
         <span class="word-count">{{ contentRemaining }} / {{ maxContentLength }}</span>
       </div>
+      
+      <!-- 预览选中的地址 -->
+      <div v-if="selectedAddrLabels.length" class="address-preview">
+        <span>位置: {{ selectedAddrLabels.join(' / ') }}</span>
+        <CloseOutlined class="clear-icon" @click="clearAddress" />
+      </div>
 
       <div class="buttom-wrapper">
         
-        <div class="emoji-bar" @mouseleave="showEmoji = false">
-          <div @mouseenter="showEmoji = true" class="emoji-btn"><SmileOutlined /></div>
+        <div class="emoji-bar" v-click-outside="hideEmojiPicker">
+          <div @click="toggleEmojiPicker" class="emoji-btn"><SmileOutlined /></div>
           <div v-if="showEmoji" class="emoji-popup">
             <emoji-picker @emoji-click="onEmojiClick" />
           </div>
@@ -50,8 +56,24 @@
           <NumberOutlined />
         </div>
 
-        <div class="map-bar" @click="onTagClick">
-          <MapIcon/>
+        <div class="map-bar" v-click-outside="hideAddressPicker">
+          <MapIcon @click="toggleAddressPicker"/>  
+          <!-- 弹出的地址选择框 -->
+          <div v-if="showAddress" 
+            class="address-popup"
+          >
+            <a-cascader
+              v-model:value="selectedAddr"
+              :options="regionOptions"
+              placeholder="请选择地址"
+              :field-names="{ label: 'label', value: 'value', children: 'children' }"
+              change-on-select
+              expand-trigger="hover"
+              show-search
+              style="width: 220px"
+              @change="onAddressChange"
+            />
+          </div>
         </div>
       </div>
 
@@ -65,12 +87,28 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { message } from "ant-design-vue";
-import { SmileOutlined, FileImageOutlined, NumberOutlined } from '@ant-design/icons-vue'
+import regionData from "@/assets/regionData";
+import { SmileOutlined, FileImageOutlined, NumberOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import MapIcon from '@/assets/icons/map.svg'
 import axios from "axios";
 import "emoji-picker-element";
+
+// 点击外部指令
+const vClickOutside = {
+  mounted(el, binding) {
+    el.clickOutsideEvent = function(event) {
+      if (!(el === event.target || el.contains(event.target))) {
+        binding.value(event);
+      }
+    };
+    document.body.addEventListener('click', el.clickOutsideEvent);
+  },
+  unmounted(el) {
+    document.body.removeEventListener('click', el.clickOutsideEvent);
+  }
+};
 
 const props = defineProps({
   open: { type: Boolean, required: true }
@@ -82,6 +120,7 @@ const title = ref("");
 const content = ref("");
 const loading = ref(false);
 const showEmoji = ref(false);
+const showAddress = ref(false)
 
 const maxTitleLength = 50;
 const maxContentLength = 500;
@@ -94,7 +133,38 @@ const onEmojiClick = (event) => {
   content.value += emoji;
 };
 
+const toggleEmojiPicker = () => {
+  showEmoji.value = !showEmoji.value;
+};
+
+const hideEmojiPicker = () => {
+  showEmoji.value = false;
+};
+
 const onTagClick = (event) => {};
+
+const toggleAddressPicker = () => {
+  showAddress.value = !showAddress.value;
+};
+
+const hideAddressPicker = () => {
+  showAddress.value = false;
+};
+
+const onAddressChange = (value, selectedOptions) => {
+  selectedAddr.value = value;
+  selectedAddrLabels.value = selectedOptions.map(option => option.label);
+};
+
+const clearAddress = () => {
+  selectedAddr.value = [];
+  selectedAddrLabels.value = [];
+};
+
+const selectedAddr = ref([]);
+const selectedAddrLabels = ref([]);
+const regionOptions = ref(regionData);
+
 
 const handleTitleInput = (e) => {
   if (e.target.value.length > maxTitleLength) {
@@ -200,6 +270,42 @@ const handleConfirm = async () => {
   color: var(--color-deeper);
 }
 
+.map-bar {
+  position: relative;
+}
+
+.address-popup {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  z-index: 1000;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.address-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: #F5F5F5;
+  border-radius: 6px;
+  margin: 3px 0;
+  font-size: 14px;
+}
+
+.clear-icon {
+  cursor: pointer;
+  color: #999;
+}
+
+.clear-icon:hover {
+  color: #ff4d4f;
+}
+
 .word-count {
   position: absolute;
   right: 8px;
@@ -215,15 +321,10 @@ const handleConfirm = async () => {
   margin-top: 20px;
 }
 
-.cancel-btn {
+.cancel-btn, .clear-btn {
   background-color: #f5f5f5;
   color: #333;
   border: 1px solid #d9d9d9;
-}
-
-.cancel-btn:hover {
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
 }
 
 .confirm-btn {
